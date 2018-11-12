@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  owner: one
+  owner_type: Owner
+  slug: MyStringOne
+  namespace: MyStringOne
+  name: MyString
+  location: MyString
+  url: MyString
+  about: MyText
+  avatar_data: MyText
+
+two:
+  owner: two
+  owner_type: Owner
+  slug: MyStringTwo
+  namespace: MyStringOne
+  name: MyString
+  location: MyString
+  url: MyString
+  about: MyText
+  avatar_data: MyText

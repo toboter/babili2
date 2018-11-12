@@ -1,0 +1,18 @@
+  <h2>Register a new team</h2>
+  <div class="d-flex mb-4 text-muted">
+    <div class="p-3 flex-fill border position-relative<%= ' text-dark' if step == 'setup' %>">
+      <%= icon('fas', 'layer-group fa-2x', class: 'float-left mt-1') %>
+      <span class="ml-3 font-weight-bold">Step 1</span><br>
+      <span class="ml-3">Create organization</span>
+    </div>
+    <div class="p-3 flex-fill border position-relative<%= ' text-dark' if step == 'membership' %>">
+      <%= icon('fas', 'users fa-2x', class: 'float-left mt-1') %>
+      <span class="ml-3 font-weight-bold">Step 2</span><br>
+      <span class="ml-3">Invite members</span>
+    </div>
+    <div class="p-3 flex-fill border position-relative<%= ' text-dark' if step == 'details' %>">
+      <%= icon('fas', 'cog fa-2x', class: 'float-left mt-1') %>
+      <span class="ml-3 font-weight-bold">Step 3</span><br>
+      <span class="ml-3">Set details</span>
+    </div>
+  </div>

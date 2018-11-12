@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  organization: one
+  approver: one
+  approved_at: 2018-11-07 15:04:46
+  role: 'Admin'
+
+two:
+  user: two
+  organization: two
+  approver: two
+  approved_at: 2018-11-07 15:04:46
+  role: 'Member'

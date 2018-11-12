@@ -1,0 +1,18 @@
+<h2>Your public profile</h2>
+<p>Here you can edit your profile settings.</p>
+
+<%= form_with model: [:settings, @profile], local: true, url: settings_profile_path, method: :put do |f| %>
+  <%= f.hidden_field :owner %>
+
+  <div class="form-group mb-4">
+    <%= f.label :namespace %>
+    <%= f.text_field :namespace, class: 'form-control' %>
+    <span class="text-smaller text-muted">current profile address <code>/<%= link_to @profile.slug, profile_path(@profile) %></code></span>
+    <p class="text-smaller form-text text-muted">A namespace is a short memorizeable name of your profile. It should not change, or external links to your data may be broken.</p>
+  </div>
+  <%= render 'form_fields', f: f %>
+
+  <div class="actions">
+    <%= f.submit "Update", class: 'btn btn-primary' %>
+  </div>
+<% end %>

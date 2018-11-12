@@ -1,0 +1,22 @@
+<div class="container mt-4">
+  <%= render 'organization_steps', step: 'membership' %>
+  <p class="text-muted">You can find your new team at <code>/<%= link_to @organization.profile.slug, @organization.profile %></code></p>
+  <h4>Invite users to your team</h4>
+  <div class="row">
+    <%= form_with model: @organization, url: update_memberships_setup_organization_path(@organization), local: true, method: :put do |f| %>
+      <div class="col-md-12">
+        <div class="mb-4">
+          <%= f.fields_for :memberships do |m| %>
+            <%= render 'membership_fields', f: m %>
+          <% end %>
+          <div class="links">
+            <%= link_to_add_association 'Add member', f, :memberships, class: 'btn btn-outline-info btn-sm' %>
+          </div>
+        </div>
+        <div class="actions">
+          <%= f.submit "Invite members", class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

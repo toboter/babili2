@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <%= render 'organization_steps', step: 'details' %>
+  <p class="text-muted">You can find your new team at <code>/<%= link_to @organization.profile.slug, @organization.profile %></code>
+  <p class="text-muted">You have added <%= content_tag :span, @organization.users.map(&:name).join(', '), class: 'font-italic' %> to the team.</p>
+  <h4>Finalize your team</h4>
+  <div class="row">
+    <%= form_with model: [:setup, @organization], url: update_details_setup_organization_path(@organization), local: true, method: :put do |f| %>
+      <div class="col-md-12">
+        <%= f.fields_for :profile do |p| %>
+          <div class="form-group mb-4">
+            <%= p.label :name %>
+            <%= p.text_field :name, autofocus: true, class: 'form-control' %>
+            <p class="text-smaller form-text text-muted">Add a meaningful name.</p>
+          </div>
+          <div class="form-group mb-4">
+            <%= p.label :location %>
+            <%= p.text_field :location, class: 'form-control' %>
+            <p class="text-smaller form-text text-muted">Your main location.</p>
+          </div>
+          <div class="form-group mb-4">
+            <%= p.label :url %>
+            <%= p.text_field :url, class: 'form-control' %>
+            <p class="text-smaller form-text text-muted">A profile page where you present your work, like a institutions web contact page.</p>
+          </div>
+          <div class="form-group mb-4">
+            <%= p.label :about %>
+            <%= p.text_area :about, class: 'form-control' %>
+            <p class="text-smaller form-text text-muted">A short description of your group.</p>
+          </div>
+          <div class="form-group mb-4">
+            <%= f.hidden_field :avatar, value: @organization.profile.cached_avatar_data %>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupFileAddon01">Avatar</span>
+              </div>
+              <div class="custom-file">
+                <%= f.file_field :avatar, class: 'custom-file-input' %>
+                <%= f.label :avatar, 'Choose a new picture', class: 'custom-file-label' %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="actions">
+          <%= f.submit "Update details", class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

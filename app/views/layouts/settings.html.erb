@@ -1,0 +1,37 @@
+<% content_for :content do %>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-md-3 sidebar">
+        <%= content_tag :div do %>
+          <span class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body">Personal Settings</span>
+          <ul class="nav flex-column">
+            <li class="nav-item"><%= link_to 'Profile', edit_settings_profile_path, class: "nav-link#{' active' if current_page?(edit_settings_profile_path)}" %></li>
+            <li class="nav-item"><%= link_to 'Account', settings_account_path, class: "nav-link#{' active' if current_page?(settings_account_path)}" %></li>
+            <li class="nav-item"><%= link_to 'Organizations', settings_organizations_path, class: "nav-link#{' active' if current_page?(settings_organizations_path)}" %></li>
+            <li class="nav-item"><%= link_to 'Security', settings_security_path, class: "nav-link#{' active' if current_page?(settings_security_path)}" %></li>
+            <li class="nav-item"><%= link_to 'Applications', settings_oauth_authorized_applications_path, class: "nav-link#{' active' if current_page?(settings_oauth_authorized_applications_path)}" %></li>
+          </ul>
+        <% end %>
+        <%= content_tag :div do %>
+          <span class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body">Admin Settings</span>
+          <%= content_tag :ul, class: "nav flex-column" do %>
+            <li class="nav-item"><%= link_to 'User adminstration', settings_users_path, class: "nav-link#{' active' if current_page?(settings_users_path)}" %></li>
+            <li class="nav-item"><%= link_to 'Background processes', sidekiq_web_path, class: "nav-link" %></li>
+          <% end %>
+        <% end if current_user.admin? %>
+        <%= content_tag :div do %>
+          <span class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-body">Developer Settings</span>
+          <%= content_tag :ul, class: "nav flex-column" do %>
+            <li class="nav-item"><%= link_to 'OAuth Apps', settings_oauth_applications_path, class: "nav-link#{' active' if current_page?(settings_oauth_applications_path)}" %></li>
+            <li class="nav-item"><%= link_to 'Personal access tokens', settings_personal_access_tokens_path, class: "nav-link#{' active' if current_page?(settings_personal_access_tokens_path)}" %></li>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="col-md-8 mt-4">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%= render template: "layouts/application" %>

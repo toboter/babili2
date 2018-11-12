@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= display_meta_tags site: 'babylon-online.org', reverse: true %>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag    'application' %>
+    <%= stylesheet_pack_tag    'application' %>
+  </head>
+
+  <body>
+    <% flash.each do |message_type, message| %>
+      <% message_type = message_type == 'notice' ? 'info' : (message_type == 'alert' ? 'warning' : message_type) %>
+      <%= javascript_tag "toastr['#{ message_type }']('#{message}', '#{message_type.humanize}')" %>
+    <% end %>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-white border-bottom border-light py-3" data-controller="navbar">
+      <%= link_to 'babylon-online.org', root_url, class: 'navbar-brand' %>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse font-weight-bold" id="navbarSupportedContent">
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search ..." aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" data-target="navbar.searchButton" type="submit">Search</button>
+        </form>
+        <ul class="navbar-nav flex-row">
+          <%= content_tag :li, link_to('Discussions', 'discussions_path', class: 'nav-link'), class: 'nav-item mx-2' %>
+          <%= content_tag :li, link_to('Explore', 'explore_path', class: 'nav-link'), class: 'nav-item mx-2' %>
+        </ul>
+        <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+          <% if user_signed_in? %>
+            <%= content_tag :li, class: 'nav-item dropdown ml-auto' do %>
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <%= icon('fas', 'plus')%>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                <%= link_to("New workspace", new_profile_workspace_path(current_user.profile), class: 'dropdown-item text-small') %>
+                <%= link_to("New organization", new_setup_organization_path, class: 'dropdown-item text-small') %>
+              </div>
+            <% end if current_user.has_profile? %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <% if current_user.has_avatar? %>
+                  <%= image_tag current_user.profile.avatar_url(:small_thumb), width: "30", height: "30", class: 'shadow-sm rounded', style: 'margin-top:-3px;' %>
+                <% else %>
+                  <%= image_tag 'defaults/avatar/small_thumb.svg', width: "30", height: "30", style: 'margin-top:-3px;' %>
+                <% end %>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                <%= content_tag(:span, "Signed in as <strong>#{current_user.name}</strong>".html_safe, class: 'dropdown-item text-smaller text-muted') %>
+                <div class="dropdown-divider"></div>
+                <% if current_user.has_profile? %>
+                  <%= link_to("Your profile", profile_path(current_user.profile), class: 'dropdown-item text-small') %>
+                  <%= link_to("Your workspaces", profile_workspaces_path(current_user.profile), class: 'dropdown-item text-small') %>
+                <% else %>
+                  <%= link_to("Create your profile", new_settings_profile_path, class: 'dropdown-item text-small') %>
+                <% end %>
+                <div class="dropdown-divider"></div>
+                <%= link_to("Help", 'writer_category_help_categories_path', class: 'dropdown-item text-small') %>
+                <%= link_to("Settings", settings_path, class: 'dropdown-item text-small') %>
+                <%= link_to("Sign Out", destroy_user_session_path, method: :delete, class: 'dropdown-item text-small') %>
+              </div>
+            </li>
+          <% else %>
+            <%= content_tag :li, link_to(icon('fas', 'sign-in-alt', 'Sign In'), new_user_session_path, class: 'nav-link'), class: 'nav-item' %>
+          <% end %>
+        </ul>
+      </div>
+    </nav>
+
+    <main style="padding-bottom:5rem;">
+      <%= content_for?(:content) ? yield(:content) : yield %>
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <div class="row text-smaller">
+          <div class="col-md-auto">&copy; <%= Time.now.strftime("%Y") %> babylon-online.org</div>
+          <div class="col-md"><%= link_to "Terms", "writer_category_help_category_path('site')" %></div>
+          <div class="col-md"><%= link_to "Security", settings_security_path %></div>
+          <div class="col-md offset-md-4"><%= link_to "Help", 'writer_category_help_categories_path' %></div>
+          <div class="col-md"><%= link_to "Contact", 'contact_path' %></div>
+          <div class="col-md"><%= link_to "API", 'writer_category_developer_tree_items_path' %></div>
+          <div class="col-md"><%= link_to "Blog", 'writer_category_blog_threads_path' %></div>
+          <div class="col-md"><%= link_to "About", 'about_path' %></div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

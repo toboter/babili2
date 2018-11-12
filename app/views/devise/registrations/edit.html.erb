@@ -1,0 +1,45 @@
+<% set_meta_tags title: 'Edit your account',
+                 description: 'Change account settings.',
+                 keywords: 'Site, Login, Members', noindex: true, nofollow: true %>
+
+<h2>Edit your account</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+  <%= devise_error_messages! %>
+
+  <div class="form-group">
+    <%= f.label :email %>
+    <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control' %>
+  </div>
+
+  <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+    <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :password %> <span class="font-italic text small text-muted">(leave blank if you don't want to change it)</span>
+    <%= f.password_field :password, autocomplete: "new-password", class: 'form-control' %>
+    <% if @minimum_password_length %>
+      <p class="font-italic text small text-muted"><%= @minimum_password_length %> characters minimum</p>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :current_password %> <span class="font-italic text small text-muted">(we need your current password to confirm your changes)</span>
+    <%= f.password_field :current_password, autocomplete: "current-password", class: 'form-control' %>
+  </div>
+
+  <div class="actions mt-4">
+    <%= f.submit "Update", class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+<div class="mt-5">
+  <h3>Cancel my account</h3>
+  <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-warning btn-sm' %></p>
+</div>

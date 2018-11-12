@@ -1,0 +1,12 @@
+<div class="nested-fields form-inline my-3">
+  <%= f.hidden_field :approver_id, value: current_user.id %>
+  <%= f.hidden_field :approved_at, value: Time.now %>
+  <%= f.hidden_field :active, value: true %>
+  <div class="form-group">
+    <%= f.collection_select :user_id, User.all, :id, :name, {include_blank: true}, {class: 'form-control'} %>
+  </div>
+  <div class="form-group">
+    <%= f.select :role, Membership::ROLES, {}, {class: 'form-control ml-2'} %>
+  </div>
+  <%= link_to_remove_association "remove", f, class: 'ml-2 btn btn-outline-info btn-sm' %>
+</div>

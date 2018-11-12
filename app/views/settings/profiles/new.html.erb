@@ -1,0 +1,17 @@
+<h2>Your public profile</h2>
+<p>By generating a public profile you will gain the ability to show others who you are and to create workspaces to manage your data.</p>
+
+<%= form_with model: [:settings, @profile], local: true, url: settings_profile_path do |f| %>
+  <%= f.hidden_field :owner %>
+
+  <div class="form-group mb-4">
+    <%= f.label :namespace %>
+    <%= f.text_field :namespace, autofocus: true, class: 'form-control' %>
+    <p class="text-smaller form-text text-muted">A namespace is a short memorizeable name of your profile. It should not change, or external links to your data may be broken.</p>
+  </div>
+  <%= render 'form_fields', f: f %>
+
+  <div class="actions">
+    <%= f.submit "Generate", class: 'btn btn-primary' %>
+  </div>
+<% end %>

@@ -1,0 +1,63 @@
+$font-family-sans-serif: 
+  system-ui, 
+  BlinkMacSystemFont, 
+  -apple-system, 
+  "Segoe UI", 
+  Roboto, 
+  Oxygen, 
+  Ubuntu, 
+  Cantarell, 
+  "Fira Sans", "Droid Sans", 
+  "Helvetica Neue", Arial, sans-serif,
+  // Emoji fonts
+  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  margin-bottom: 3rem; /* Margin bottom by footer height */
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 3rem; /* Set the fixed height of the footer here */
+  line-height: 1.5rem; /* Vertically center the text there */
+}
+
+.text-small {
+  font-size: 0.95rem;
+}
+
+.text-smaller {
+  font-size: 0.85rem;
+}
+
+.text-smallest {
+  font-size: 0.75rem;
+}
+
+#error_explanation {
+  @extend .alert;
+  @extend .alert-warning;
+  h2 {
+    @extend .alert-heading;
+    @extend .h4;
+  }
+}
+
+.sidebar {
+  ul.nav {
+    a.nav-link {
+      @extend .text-muted;
+    }
+    a.nav-link:hover {
+      @extend .text-dark;
+    }
+    a.nav-link.active {
+        @extend .text-primary;
+    }
+  }
+}
