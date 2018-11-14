@@ -50,8 +50,11 @@ gem 'devise'
 gem "cancancan"
 gem 'sidekiq'
 gem 'friendly_id'
+gem 'simple_form'
 gem 'browser'
 gem 'meta-tags'
 gem 'font-awesome-sass'
 gem 'public_activity'
 gem "cocoon"
+gem 'active_link_to'
+gem 'wicked'

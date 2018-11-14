@@ -1,0 +1,26 @@
+<tr class="nested-fields">
+  <td>
+    <%= f.input :user_id, 
+      collection: @users, 
+      label_method: :name, 
+      value_method: :id, 
+      include_blank: true,
+      label: false,
+      disabled: (f.object.user == current_user || !f.object.new_record?) %>
+    <%= f.hidden_field :user_id, value: f.object.user_id if (f.object.user == current_user || !f.object.new_record?) %>
+  </td>
+  <td>
+    <%= f.input :role, 
+      collection: Membership::ROLES, 
+      include_blank: false,
+      label: false,
+      disabled: f.object.user == current_user %>
+      <%= f.hidden_field :role, value: f.object.role if f.object.user == current_user %>
+  </td>
+  <td>
+    <%= f.input :approved, as: :boolean, checked_value: (f.object.approved ? true : current_user.id), unchecked_value: 'false' unless f.object.user == current_user %>
+  </td>
+  <td>
+    <%= link_to_remove_association icon('fas', 'remove', 'remove'), f unless f.object.user == current_user %>
+  </td>
+</tr>

@@ -1,8 +1,8 @@
 require 'test_helper'
 
 class OrganizationsControllerTest < ActionDispatch::IntegrationTest
-  test "should get new" do
-    get organizations_new_url
+  test "should get index" do
+    get organizations_index_url
     assert_response :success
   end
 

@@ -1,0 +1,60 @@
+<h2>Edit organizations</h2>
+
+<%= simple_form_for [:settings, @organization] do |f| %>
+  <div class="row">
+    <div class="col-md-12">
+      <%= f.error_notification %>
+      <div class="row">
+        <%= content_tag :div, class: "col-md-10" do %>
+          <%= f.simple_fields_for :profile do |p| %>
+            <%= p.input :name %>
+            <%= p.input :namespace, hint: "Changing the namespace can have unintended side effects. Your current url is #{content_tag :code, profile_path(@organization.profile)}".html_safe %>
+            <%= p.input :about, input_html: { rows: 12, id: 'description' } %>
+            <div class="d-inline-flex">
+              <%= image_tag @organization.profile.avatar_url(:thumb), width: '65', height: '65', class: 'shadow-sm rounded mr-3' if @organization.profile.avatar.present? %>
+              <%= p.hidden_field :avatar, value: @organization.profile.cached_avatar_data %>
+              <%= p.input :avatar, as: :file %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+      
+      <div class="row" id="memberships">
+        <div class="col-md-12">
+          <hr>
+          <h5 class="text-secondary">Memberships</h5>
+          <table class="table table-borderless mb-0">
+            <thead>
+              <tr>
+                <th>User name</th>
+                <th>Role</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody class="line_items">
+              <%= f.simple_fields_for :memberships do |m| %>
+                <%= render 'membership_fields', f: m %>
+              <% end %>
+            </tbody>
+          </table>
+          <div class="mb-3">
+            <%= link_to_add_association icon('fas', 'plus', 'Member'), f, :memberships, data: {"association-insertion-node": "tbody.line_items", "association-insertion-method": "append"}, class: 'btn btn-secondary btn-sm' %>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <%= f.input :private, hint: 'If you make a team private, it will only be visible for members on the settings pages.' %>
+          <%= f.submit class: 'btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :modals do %>
+  <%= render partial: 'settings/organizations/modals/profile' %>
+<% end %>

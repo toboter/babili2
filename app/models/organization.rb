@@ -7,14 +7,18 @@ class Organization < ApplicationRecord
   accepts_nested_attributes_for :profile, reject_if: proc { |attributes| attributes['namespace'].blank? }
   accepts_nested_attributes_for :memberships, reject_if: :all_blank, allow_destroy: true
 
-  validates :profile, presence: true
+  # validates :profile, presence: true
+
+  delegate :name, :namespace, :about, to: :profile
+
+  scope :visible, -> { where private: false }
   
   def orphan?
     !memberships.any?
   end
 
   def admins
-    users.merge(Membership.admin)
+    users.merge(Membership.admin).presence || [creator]
   end
 
 end

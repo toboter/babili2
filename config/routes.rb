@@ -1,6 +1,10 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
+  get 'profiles/show'
+  namespace :settings do
+    get 'organizations/index'
+  end
   get 'organizations/new'
   namespace :settings do
     get 'securities/show'
@@ -16,7 +20,11 @@ Rails.application.routes.draw do
     devise_scope :user do
       get "/account" => "/devise/registrations#edit"
     end
-    resources :organizations
+    resources :organizations do
+      resources :memberships, only: :destroy do
+        put :approve, on: :member
+      end
+    end
     resource :security, only: :show do
       resources :user_sessions, only: :destroy
     end
@@ -32,20 +40,18 @@ Rails.application.routes.draw do
   end
 
   namespace :setup do
-    resources :organizations, only: [:new, :create] do
-      member do
-        get :memberships
-        put :update_memberships
-        get :details
-        put :update_details
-      end
+    resources :organizations, only: [:create, :show, :update] do
+      resources :build, controller: 'organizations'
     end
   end
 
+  resources :organizations, only: :index do
+    resources :memberships, only: :create #apply
+  end
 
   root to: "home#index"
 
-  resources :profiles, path: '' do
+  resources :profiles, only: :show, path: '' do
     resources :workspaces do
       resources :nodes
     end

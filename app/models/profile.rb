@@ -8,6 +8,18 @@ class Profile < ApplicationRecord
 
   validates :namespace, presence: :true
 
+  def name
+    super.presence || slug
+  end
+
+  def organization?
+    owner_type == 'Organization'
+  end
+
+  def user?
+    owner_type == 'User'
+  end
+
   def should_generate_new_friendly_id?
     namespace_changed? || super
   end

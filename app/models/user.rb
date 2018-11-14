@@ -17,8 +17,6 @@ class User < ApplicationRecord
   scope :admin, -> { where admin: true }
   scope :approved, -> { where.not approved_at: nil }
 
-  delegate :name, to: :profile
-
   def self.send_reset_password_instructions(attributes={})
     recoverable = find_or_initialize_with_errors(reset_password_keys, attributes, :not_found)
     if !recoverable.approved?
@@ -60,7 +58,7 @@ class User < ApplicationRecord
   end
 
   def name
-    email
+    profile.present? ? profile.name : email
   end
 
   def send_admin_mail

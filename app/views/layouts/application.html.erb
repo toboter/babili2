@@ -17,7 +17,7 @@
       <% message_type = message_type == 'notice' ? 'info' : (message_type == 'alert' ? 'warning' : message_type) %>
       <%= javascript_tag "toastr['#{ message_type }']('#{message}', '#{message_type.humanize}')" %>
     <% end %>
-    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-white border-bottom border-light py-3" data-controller="navbar">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-secondary py-3" data-controller="navbar">
       <%= link_to 'babylon-online.org', root_url, class: 'navbar-brand' %>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -39,7 +39,7 @@
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                 <%= link_to("New workspace", new_profile_workspace_path(current_user.profile), class: 'dropdown-item text-small') %>
-                <%= link_to("New organization", new_setup_organization_path, class: 'dropdown-item text-small') %>
+                <%= link_to("New organization", setup_organizations_path, method: :post, class: 'dropdown-item text-small') %>
               </div>
             <% end if current_user.has_profile? %>
             <li class="nav-item dropdown">

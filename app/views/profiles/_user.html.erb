@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="hcard col-md-3" itemscope itemtype="http://schema.org/Person">
+      <%= image_tag @profile.avatar_url(:large_thumb), class: 'shadow-sm rounded mx-auto mb-2 w-100', itemprop: 'image' %>
+      <div class="names-container py-2">
+        <%= content_tag :h2, @profile.name, class: 'font-weight-normal', itemprop: "name" %>
+        <%= content_tag :h4, @profile.slug, class: 'font-weight-normal text-dark', itemprop: "additionalName" %>
+      </div>
+      <div class="details-container">
+        <%= content_tag :p, @profile.about, class: 'text-smaller text-dark' if @profile.about.present? %>
+        <ul class=" list-unstyled text-smaller text-dark border-top border-bottom py-3">
+          <%= content_tag :li, icon('fas', 'location-arrow', content_tag(:span, @profile.location, class: 'ml-1')), itemprop: "homeLocation" if @profile.location.present? %>
+          <%= content_tag :li, icon('fas', 'link', link_to(@profile.url, @profile.url, target: :blank, class: 'ml-1')), itemprop: "url" if @profile.url.present? %>
+          <%= content_tag :li, icon('far', 'clock', content_tag(:span, @profile.created_at.to_date.to_formatted_s(:long), class: 'ml-1')) %>
+        </ul>
+      </div>
+      <div class="actions-container">
+        <ul class=" list-unstyled text-smaller text-dark">
+          <%= content_tag :li, icon('fas', 'cog', link_to('Edit your profile', edit_settings_profile_path, class: 'ml-1')) if user_signed_in? && @profile.owner == current_user %>
+        </ul>
+      </div>
+
+      <div class="organizations-container border-top pt-4 mb-4">
+        <h6 class='font-weight-normal text-dark'>
+          Organizations
+        </h6>
+        <% @profile.owner.organizations.each do |org| %>
+          <%= link_to(image_tag(org.profile.avatar_url(:small_thumb), width: "50", height: "50", class: 'rounded'), org.profile, title: org.name, data: {toggle: "tooltip", placement: "bottom"}) %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="main col-md-9 mt-3">
+      <ul class="nav nav-tabs text-small">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><%= icon('fas', 'archive', 'Workspaces') %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><%= icon('fas', 'sitemap', 'Vocabularies') %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><%= icon('fas', 'star', 'Stars') %></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

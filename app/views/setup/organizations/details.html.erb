@@ -4,7 +4,7 @@
   <p class="text-muted">You have added <%= content_tag :span, @organization.users.map(&:name).join(', '), class: 'font-italic' %> to the team.</p>
   <h4>Finalize your team</h4>
   <div class="row">
-    <%= form_with model: [:setup, @organization], url: update_details_setup_organization_path(@organization), local: true, method: :put do |f| %>
+    <%= form_with model: [:setup, @organization], url: wizard_path, method: :put, local: true do |f| %>
       <div class="col-md-12">
         <%= f.fields_for :profile do |p| %>
           <div class="form-group mb-4">
@@ -42,7 +42,7 @@
         <% end %>
 
         <div class="actions">
-          <%= f.submit "Update details", class: 'btn btn-primary' %>
+          <%= f.submit "Update details and finish", class: 'btn btn-primary' %>
         </div>
       </div>
     <% end %>

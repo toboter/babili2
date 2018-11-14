@@ -1,0 +1,80 @@
+<main role="main">
+  <div class="page-header" style="margin-top:0px;">
+    <h3 style="margin-top:0px;">
+      Organizations
+    </h3>
+    <p class="text-gray">Applys and memberships for organizations.</p>
+  </div>
+  <%= content_tag :div, id: 'organizations-by-applications' do %>
+    <table class="table table-simple">
+      <thead>
+      <tr>
+        <th style="width:60%;">Team awaiting confirmation</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @applyments.each do |applyment| %>
+        <tr>
+          <td>
+            <p class="text-strong"><%= link_to applyment.organization.name, applyment.organization.profile %></p>
+            <%= content_tag :p, class: 'text-muted text-small' do %>
+              <%= "Current admins: #{applyment.organization.admins.map(&:name).join(', ')}" %><br>
+              <%= "Created at: #{applyment.organization.created_at.to_date.to_formatted_s(:long)}" %>
+            <% end %>
+          </td>
+          <td>
+            <%= content_tag :p, link_to('Leave', settings_organization_membership_path(applyment.organization, applyment), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-default btn-sm text-strong pull-right') %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end if @applyments.any? %>
+
+  <%= content_tag :div, id: 'organizations-by-memberships' do %>
+    <table class="table table-simple">
+      <thead>
+      <tr>
+        <th style="width:60%;">Team</th>
+        <th>Your role</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @memberships.each do |membership| %>
+        <tr>
+          <td>
+            <p class="text-strong"><%= link_to "#{membership.organization.namespace}", membership.organization.profile %></p>
+            <%= content_tag :p, truncate(membership.organization.about, length: 200), class: 'text-small' if membership.organization.about %>
+            <%= content_tag :p, class: 'text-muted text-small' do %>
+              <%= "Admins: #{membership.organization.admins.map(&:name).join(', ')}" %><br>
+              <%= "Created at: #{membership.organization.created_at.to_date.to_formatted_s(:long)}" %>
+            <% end %>
+          </td>
+          <td>
+            <%= content_tag :p, class: 'text-muted text-small' do %>
+              <%= content_tag :span, "#{membership.role}", class: 'text-strong' %><br>
+              <%= "Since: #{membership.updated_at.to_date.to_formatted_s(:long)}" %>
+            <% end %>
+          </td>
+          <td>
+            <%= content_tag :p, link_to('Leave', settings_organization_membership_path(membership.organization, membership), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-default btn-sm text-strong') unless membership.role == 'Admin' %>
+            <p><%= link_to 'Edit', edit_settings_organization_path(membership.organization), class: 'btn btn-default btn-sm text-strong' %></p>
+            <p><%= link_to 'Remove', [:settings, membership.organization], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm text-strong' %></p>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end if @memberships.any? %>
+
+  <%= content_tag :div do %>
+    <div class="alert alert-light mt-4" role="alert">
+      <h4 class="alert-heading">Nothing found!</h4>
+      <p>You are not a member of a group or did not apply to one.</p>
+      <hr>
+      <p class="mb-0">You can try <%= link_to 'create your own', setup_organizations_path, method: :post %> or <%= link_to 'choose one', organizations_path %> to apply to.</p>
+    </div>
+  <% end unless @memberships.any? || @applyments.any? %>
+</main>

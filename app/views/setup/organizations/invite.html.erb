@@ -3,10 +3,10 @@
   <p class="text-muted">You can find your new team at <code>/<%= link_to @organization.profile.slug, @organization.profile %></code></p>
   <h4>Invite users to your team</h4>
   <div class="row">
-    <%= form_with model: @organization, url: update_memberships_setup_organization_path(@organization), local: true, method: :put do |f| %>
+    <%= form_with model: [:setup, @organization], url: wizard_path, method: :put, local: true do |f| %>
       <div class="col-md-12">
         <div class="mb-4">
-          <%= f.fields_for :memberships do |m| %>
+          <%= f.fields_for :memberships, @organization.memberships.build(user: current_user, approver: current_user, approved_at: Time.now, role: 'Admin', active: true) do |m| %>
             <%= render 'membership_fields', f: m %>
           <% end %>
           <div class="links">

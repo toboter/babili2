@@ -39,6 +39,10 @@ body {
   font-size: 0.75rem;
 }
 
+.active {
+  font-weight: 500;
+}
+
 #error_explanation {
   @extend .alert;
   @extend .alert-warning;
@@ -58,6 +62,14 @@ body {
     }
     a.nav-link.active {
         @extend .text-primary;
+    }
+  }
+}
+
+ul.nav-tabs {
+  li.nav-item {
+    a.nav-link {
+      @extend .text-dark;
     }
   }
 }
