@@ -4,18 +4,18 @@
     <%= form_with model: [:setup, @organization], url: wizard_path, method: :put, local: true do |f| %>
       <%= f.hidden_field :creator %>
       <div class="col-md-6">
-        <div class="form-group mb-4">
-          <%= f.fields_for :profile, @organization.build_profile do |p| %>
+        <%= f.fields_for :profile, @organization.build_profile do |p| %>
+          <div class="form-group mb-4">
             <%= p.label :namespace %>
             <%= p.text_field :namespace, autofocus: true, class: 'form-control' %>
             <p class="text-smaller form-text text-muted">A namespace is a short memorizeable name of your organizations profile. It should not change, or external links to your data may be broken.</p>
-          <% end %>
-        </div>
-        <div class="form-group mb-4">
-          <%= f.check_box :private %>
-          <%= f.label :private %>
-          <p class="text-smaller form-text text-muted">Marking the group as private means it won't be visible through search or any other type of information retriaval.</p>
-        </div>
+          </div>
+          <div class="form-group mb-4">
+            <%= p.check_box :private %>
+            <%= p.label :private %>
+            <p class="text-smaller form-text text-muted">Marking the group as private means it won't be visible through search or any other type of information retriaval.</p>
+          </div>
+        <% end %>
         <div class="actions">
           <%= f.submit "Add namespace and visibility", class: 'btn btn-primary' %>
         </div>

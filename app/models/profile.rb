@@ -1,15 +1,18 @@
 class Profile < ApplicationRecord
-  include AvatarUploader[:avatar]
+  include Uploader::AvatarUploader[:avatar]
   extend FriendlyId
   friendly_id :namespace, use: :slugged  #????
   # shrine
 
   belongs_to :owner, polymorphic: true
+  has_many :schemes, dependent: :destroy, class_name: 'Vocabulary::Scheme'
 
   validates :namespace, presence: :true
 
-  def name
-    super.presence || slug
+  scope :visible, -> { where private: false }
+
+  def title
+    name.presence || slug
   end
 
   def organization?

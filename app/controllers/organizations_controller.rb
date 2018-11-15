@@ -1,5 +1,5 @@
 class OrganizationsController < ApplicationController
   def index
-    @organizations = Organization.visible
+    @organizations = []
   end
 end

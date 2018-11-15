@@ -20,14 +20,14 @@
         </ul>
       </div>
 
-      <div class="organizations-container border-top pt-4 mb-4">
+      <%= content_tag :div, class: "organizations-container border-top pt-4 mb-4" do %>
         <h6 class='font-weight-normal text-dark'>
           Organizations
         </h6>
         <% @profile.owner.organizations.each do |org| %>
           <%= link_to(image_tag(org.profile.avatar_url(:small_thumb), width: "50", height: "50", class: 'rounded'), org.profile, title: org.name, data: {toggle: "tooltip", placement: "bottom"}) %>
         <% end %>
-      </div>
+      <% end if @profile.owner.organizations.any? %>
     </div>
 
     <div class="main col-md-9 mt-3">

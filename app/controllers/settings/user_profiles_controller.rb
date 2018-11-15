@@ -1,8 +1,9 @@
-class Settings::ProfilesController < ApplicationController
+class Settings::UserProfilesController < ApplicationController
   before_action :set_user
   layout 'settings'
 
   def new
+    authorize [:settings, @user.build_profile], policy_class: Settings::UserProfilePolicy
     set_meta_tags title: 'Generate Profile | Settings',
                   description: 'Edit profile page',
                   noindex: true,
@@ -19,13 +20,11 @@ class Settings::ProfilesController < ApplicationController
 
     redirect_to new_settings_profile_path unless @user.profile.present?
     @profile = @user.profile
-  end
-
-  def edit_namespace
-
+    authorize([:settings, @profile], policy_class: Settings::UserProfilePolicy)
   end
 
   def create
+    authorize [:settings, @user.build_profile], policy_class: Settings::UserProfilePolicy
     @profile = @user.build_profile(profile_params)
     respond_to do |format|
       if @profile.save
@@ -39,8 +38,10 @@ class Settings::ProfilesController < ApplicationController
   end
 
   def update
+    @profile = @user.profile
+    authorize [:settings, @profile], policy_class: Settings::UserProfilePolicy
     respond_to do |format|
-      if @user.profile.update(profile_params)
+      if @profile.update(profile_params)
         format.html { redirect_to edit_settings_profile_url, notice: 'Updated your profile.' }
         format.js
       else
@@ -56,6 +57,6 @@ class Settings::ProfilesController < ApplicationController
     end
 
     def profile_params
-      params.require(:profile).permit(:namespace, :name, :location, :url, :about, :avatar)
+      params.require(:profile).permit(:id, :namespace, :name, :location, :url, :about, :avatar)
     end
 end

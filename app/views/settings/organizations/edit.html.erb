@@ -8,6 +8,7 @@
         <%= content_tag :div, class: "col-md-10" do %>
           <%= f.simple_fields_for :profile do |p| %>
             <%= p.input :name %>
+            <%= p.input :private, hint: 'Changes the visibility and accessiblity to members only.' %>
             <%= p.input :namespace, hint: "Changing the namespace can have unintended side effects. Your current url is #{content_tag :code, profile_path(@organization.profile)}".html_safe %>
             <%= p.input :about, input_html: { rows: 12, id: 'description' } %>
             <div class="d-inline-flex">
@@ -47,7 +48,6 @@
 
       <div class="row">
         <div class="col-md-6">
-          <%= f.input :private, hint: 'If you make a team private, it will only be visible for members on the settings pages.' %>
           <%= f.submit class: 'btn btn-primary' %>
         </div>
       </div>

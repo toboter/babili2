@@ -1,14 +1,6 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  get 'profiles/show'
-  namespace :settings do
-    get 'organizations/index'
-  end
-  get 'organizations/new'
-  namespace :settings do
-    get 'securities/show'
-  end
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
   end
@@ -16,14 +8,12 @@ Rails.application.routes.draw do
 
   namespace :settings do
     get '/', to: redirect("/settings/profile/edit")
-    resource :profile, only: [:new, :create, :edit, :update], path_names: { new: 'generate' }
+    resource :profile, only: [:new, :create, :edit, :update], path_names: { new: 'generate' }, controller: 'user_profiles'
     devise_scope :user do
       get "/account" => "/devise/registrations#edit"
     end
     resources :organizations do
-      resources :memberships, only: :destroy do
-        put :approve, on: :member
-      end
+      resources :memberships, only: [:create, :destroy] #apply, leave
     end
     resource :security, only: :show do
       resources :user_sessions, only: :destroy
@@ -45,13 +35,16 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :organizations, only: :index do
-    resources :memberships, only: :create #apply
-  end
+  resources :organizations, only: :index
 
   root to: "home#index"
 
   resources :profiles, only: :show, path: '' do
+    scope module: :vocabulary do
+      resources :schemes, path: 'vocabularies' do
+        resources :concepts
+      end
+    end
     resources :workspaces do
       resources :nodes
     end

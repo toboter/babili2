@@ -1,6 +1,6 @@
 require "image_processing/mini_magick"
 
-class AvatarUploader < Shrine
+class Uploader::AvatarUploader < Shrine
   plugin :processing
   plugin :determine_mime_type
   plugin :versions   # enable Shrine to handle a hash of files

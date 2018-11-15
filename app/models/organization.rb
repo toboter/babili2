@@ -9,10 +9,8 @@ class Organization < ApplicationRecord
 
   # validates :profile, presence: true
 
-  delegate :name, :namespace, :about, to: :profile
+  delegate :name, :namespace, :about, :private?, to: :profile
 
-  scope :visible, -> { where private: false }
-  
   def orphan?
     !memberships.any?
   end

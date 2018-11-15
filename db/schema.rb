@@ -10,34 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_12_122550) do
+ActiveRecord::Schema.define(version: 2018_11_15_164659) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "activities", force: :cascade do |t|
+  create_table "activities", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "trackable_type"
-    t.bigint "trackable_id"
+    t.uuid "trackable_id"
     t.string "owner_type"
-    t.bigint "owner_id"
+    t.uuid "owner_id"
     t.string "key"
     t.text "parameters"
     t.string "recipient_type"
-    t.bigint "recipient_id"
+    t.uuid "recipient_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["owner_id", "owner_type"], name: "index_activities_on_owner_id_and_owner_type"
     t.index ["owner_type", "owner_id"], name: "index_activities_on_owner_type_and_owner_id"
-    t.index ["recipient_id", "recipient_type"], name: "index_activities_on_recipient_id_and_recipient_type"
     t.index ["recipient_type", "recipient_id"], name: "index_activities_on_recipient_type_and_recipient_id"
-    t.index ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type"
     t.index ["trackable_type", "trackable_id"], name: "index_activities_on_trackable_type_and_trackable_id"
   end
 
-  create_table "friendly_id_slugs", id: :serial, force: :cascade do |t|
+  create_table "friendly_id_slugs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "slug", null: false
-    t.integer "sluggable_id", null: false
+    t.uuid "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.string "scope"
     t.datetime "created_at"
@@ -65,12 +62,10 @@ ActiveRecord::Schema.define(version: 2018_11_12_122550) do
   end
 
   create_table "organizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.boolean "private"
     t.uuid "creator_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_id"], name: "index_organizations_on_creator_id"
-    t.index ["private"], name: "index_organizations_on_private"
   end
 
   create_table "profiles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -85,8 +80,10 @@ ActiveRecord::Schema.define(version: 2018_11_12_122550) do
     t.text "avatar_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "private", default: false, null: false
     t.index ["namespace"], name: "index_profiles_on_namespace", unique: true
     t.index ["owner_type", "owner_id"], name: "index_profiles_on_owner_type_and_owner_id"
+    t.index ["private"], name: "index_profiles_on_private"
     t.index ["slug"], name: "index_profiles_on_slug", unique: true
   end
 
@@ -130,10 +127,106 @@ ActiveRecord::Schema.define(version: 2018_11_12_122550) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vocabulary_concepts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "scheme_id"
+    t.string "type"
+    t.integer "references_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["scheme_id"], name: "index_vocabulary_concepts_on_scheme_id"
+    t.index ["type"], name: "index_vocabulary_concepts_on_type"
+  end
+
+  create_table "vocabulary_hyper_concepts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "uri"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "vocabulary_labels", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "labelable_type"
+    t.uuid "labelable_id"
+    t.uuid "creator_id"
+    t.string "type"
+    t.string "vernacular"
+    t.string "historical"
+    t.string "body"
+    t.string "language"
+    t.boolean "abbrevation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_vocabulary_labels_on_creator_id"
+    t.index ["labelable_type", "labelable_id"], name: "index_vocabulary_labels_on_labelable_type_and_labelable_id"
+    t.index ["type"], name: "index_vocabulary_labels_on_type"
+  end
+
+  create_table "vocabulary_notes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "notable_type"
+    t.uuid "notable_id"
+    t.uuid "creator_id"
+    t.string "type"
+    t.text "body"
+    t.string "language"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_vocabulary_notes_on_creator_id"
+    t.index ["notable_type", "notable_id"], name: "index_vocabulary_notes_on_notable_type_and_notable_id"
+    t.index ["type"], name: "index_vocabulary_notes_on_type"
+  end
+
+  create_table "vocabulary_relationships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "concept_id"
+    t.uuid "creator_id"
+    t.string "type"
+    t.string "inversable_type"
+    t.uuid "inversable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["concept_id"], name: "index_vocabulary_relationships_on_concept_id"
+    t.index ["creator_id"], name: "index_vocabulary_relationships_on_creator_id"
+    t.index ["inversable_type", "inversable_id"], name: "index_vocabulary_relationships_on_inverseable"
+    t.index ["type"], name: "index_vocabulary_relationships_on_type"
+  end
+
+  create_table "vocabulary_schemes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "profile_id"
+    t.uuid "creator_id"
+    t.string "abbr"
+    t.string "name"
+    t.string "slug"
+    t.integer "concepts_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["abbr"], name: "index_vocabulary_schemes_on_abbr"
+    t.index ["creator_id"], name: "index_vocabulary_schemes_on_creator_id"
+    t.index ["profile_id"], name: "index_vocabulary_schemes_on_profile_id"
+    t.index ["slug"], name: "index_vocabulary_schemes_on_slug", unique: true
+  end
+
+  create_table "vocabulary_states", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "concept_id"
+    t.uuid "creator_id"
+    t.string "state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["concept_id"], name: "index_vocabulary_states_on_concept_id"
+    t.index ["creator_id"], name: "index_vocabulary_states_on_creator_id"
+    t.index ["state"], name: "index_vocabulary_states_on_state"
+  end
+
   add_foreign_key "memberships", "organizations"
   add_foreign_key "memberships", "users"
   add_foreign_key "memberships", "users", column: "approver_id"
   add_foreign_key "organizations", "users", column: "creator_id"
   add_foreign_key "user_sessions", "users"
   add_foreign_key "users", "users", column: "approver_id"
+  add_foreign_key "vocabulary_concepts", "vocabulary_schemes", column: "scheme_id"
+  add_foreign_key "vocabulary_labels", "users", column: "creator_id"
+  add_foreign_key "vocabulary_notes", "users", column: "creator_id"
+  add_foreign_key "vocabulary_relationships", "users", column: "creator_id"
+  add_foreign_key "vocabulary_relationships", "vocabulary_concepts", column: "concept_id"
+  add_foreign_key "vocabulary_schemes", "profiles"
+  add_foreign_key "vocabulary_schemes", "users", column: "creator_id"
+  add_foreign_key "vocabulary_states", "users", column: "creator_id"
+  add_foreign_key "vocabulary_states", "vocabulary_concepts", column: "concept_id"
 end

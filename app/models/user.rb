@@ -6,8 +6,9 @@ class User < ApplicationRecord
   belongs_to :approver, class_name: "User", optional: true
   has_many :memberships, dependent: :destroy
   has_many :organizations, through: :memberships
+  has_many :organizations_profiles, through: :organizations, source: :profile
   has_many :sessions, class_name: 'UserSession', dependent: :destroy
-  has_many :secure_activities, -> { where key: ['user.sign_in', 'user.password_changed'] }, class_name: 'PublicActivity::Activity', as: :trackable
+  has_many :vital_activities, -> { where key: ['user.sign_in', 'user.password_changed'] }, class_name: 'PublicActivity::Activity', as: :trackable
   has_one :profile, as: :owner, dependent: :destroy
   
   after_create :send_admin_mail

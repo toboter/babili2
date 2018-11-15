@@ -2,17 +2,20 @@
   <div class="container">
     <div class="d-flex flex-column flex-md-row text-center text-md-left py-4">
       <%= image_tag @profile.avatar_url(:thumb), width: "100", height: "100", class: 'shadow-sm rounded mx-auto mb-2' %>
-      <%= content_tag :div, class: 'mx-3' do %>
-        <%= content_tag :h2, @profile.name, class: 'font-weight-normal' %>
+      <%= content_tag :div, class: 'mx-3 flex-grow-1' do %>
+        <%= content_tag :h2, class: 'font-weight-normal' do %>
+          <%= @profile.title %>
+          <%= icon('fas', 'eye-slash', class: 'text-small text-secondary align-middle ml-1', title: 'Organization is private.', data: {toggle: "tooltip", placement: "right"}) if @profile.private? %>
+        <% end %>
         <%= content_tag :p, @profile.about, class: 'text-smaller text-secondary' %>
       <% end %>
       <%= content_tag :div, class: 'text-smaller text-secondary', style: 'min-width: 20%;' do %>
         <ul class="list-unstyled float-md-right">
-          <%= content_tag :li, icon('fas', 'terminal', "/#{@profile.slug}") if @profile.slug %>
-          <%= content_tag :li, icon('fas', 'location-arrow', @profile.location) if @profile.location %>
-          <%= content_tag :li, icon('fas', 'link', link_to(@profile.url, @profile.url, target: :blank)) if @profile.url %>
-          <%= content_tag :li, icon('far', 'clock', @profile.created_at.to_date.to_formatted_s(:long)) %>
-          <%= content_tag :li, icon('fas', 'cog', link_to('Edit organization settings', edit_settings_organization_path(@profile.owner))), class: 'mt-1' if user_signed_in? && @members.include?(current_user) %>
+          <%= content_tag :li, icon('fas', 'terminal', content_tag(:span, "/#{@profile.slug}", class: 'ml-1')) if @profile.slug %>
+          <%= content_tag :li, icon('fas', 'location-arrow', content_tag(:span, @profile.location, class: 'ml-1')) if @profile.location %>
+          <%= content_tag :li, icon('fas', 'link', link_to(@profile.url, @profile.url, target: :blank, class: 'ml-1')) if @profile.url %>
+          <%= content_tag :li, icon('far', 'clock', content_tag(:span, @profile.created_at.to_date.to_formatted_s(:long), class: 'ml-1')) %>
+          <%= content_tag :li, icon('fas', 'cog', link_to('Edit organization settings', edit_settings_organization_path(@profile.owner), class: 'ml-1')), class: 'mt-1' if policy([:settings, @profile.owner]).update? %>
         </ul>
       <% end %>
     </div>
@@ -48,7 +51,7 @@
       </div>
       <%= content_tag :div, class: 'membership-actions float-right' do %>
         <% if !@profile.owner.users.include?(current_user) %>
-          <%= form_for Membership.new, url: organization_memberships_path(@profile.owner), method: :post, html: {id: "new_organization_membership_#{@profile.slug}", style: "display:inline!important;"} do |f| %>
+          <%= form_for Membership.new, url: settings_organization_memberships_path(@profile.owner), method: :post, html: {id: "new_organization_membership_#{@profile.slug}", style: "display:inline!important;"} do |f| %>
             <%= f.submit 'Apply as member', class: 'btn btn-sm btn-outline-primary' %>
           <% end %>
         <% elsif @profile.owner.users.merge(Membership.not_approved).include?(current_user) %>

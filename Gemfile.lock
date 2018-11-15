@@ -57,7 +57,6 @@ GEM
     browser (2.5.3)
     builder (3.2.3)
     byebug (10.0.2)
-    cancancan (2.2.0)
     capybara (3.10.1)
       addressable
       mini_mime (>= 0.1.3)
@@ -146,6 +145,8 @@ GEM
       railties (>= 3.0.0)
     public_suffix (3.0.3)
     puma (3.12.0)
+    pundit (2.0.0)
+      activesupport (>= 3.0.0)
     rack (2.0.6)
     rack-protection (2.0.4)
       rack
@@ -260,7 +261,6 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   browser
   byebug
-  cancancan
   capybara (>= 2.15)
   chromedriver-helper
   cocoon
@@ -279,6 +279,7 @@ DEPENDENCIES
   pg (>= 0.18, < 2.0)
   public_activity
   puma (~> 3.11)
+  pundit
   rails (~> 5.2.1)
   redis (~> 4.0)
   sassc-rails

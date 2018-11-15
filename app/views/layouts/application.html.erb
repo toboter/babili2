@@ -39,7 +39,7 @@
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                 <%= link_to("New workspace", new_profile_workspace_path(current_user.profile), class: 'dropdown-item text-small') %>
-                <%= link_to("New organization", setup_organizations_path, method: :post, class: 'dropdown-item text-small') %>
+                <%= link_to("New organization", setup_organizations_path, method: :post, class: 'dropdown-item text-small') if policy(Organization.new).create? %>
               </div>
             <% end if current_user.has_profile? %>
             <li class="nav-item dropdown">
