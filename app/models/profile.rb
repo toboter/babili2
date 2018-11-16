@@ -5,7 +5,7 @@ class Profile < ApplicationRecord
   # shrine
 
   belongs_to :owner, polymorphic: true
-  has_many :schemes, dependent: :destroy, class_name: 'Vocabulary::Scheme'
+  has_many :concepts, dependent: :destroy, class_name: 'Vocabulary::Concept'
 
   validates :namespace, presence: :true
 

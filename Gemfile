@@ -58,3 +58,4 @@ gem 'public_activity'
 gem "cocoon"
 gem 'active_link_to'
 gem 'wicked'
+gem 'attr_json'

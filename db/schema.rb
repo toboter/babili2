@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 2018_11_15_164659) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "private", default: false, null: false
+    t.integer "concepts_count"
     t.index ["namespace"], name: "index_profiles_on_namespace", unique: true
     t.index ["owner_type", "owner_id"], name: "index_profiles_on_owner_type_and_owner_id"
     t.index ["private"], name: "index_profiles_on_private"
@@ -128,50 +129,26 @@ ActiveRecord::Schema.define(version: 2018_11_15_164659) do
   end
 
   create_table "vocabulary_concepts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "scheme_id"
+    t.uuid "profile_id"
+    t.uuid "source_id"
+    t.uuid "creator_id"
     t.string "type"
-    t.integer "references_count"
+    t.jsonb "data"
+    t.integer "references_count", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["scheme_id"], name: "index_vocabulary_concepts_on_scheme_id"
+    t.index ["creator_id"], name: "index_vocabulary_concepts_on_creator_id"
+    t.index ["data"], name: "index_vocabulary_concepts_on_data", using: :gin
+    t.index ["profile_id"], name: "index_vocabulary_concepts_on_profile_id"
+    t.index ["source_id"], name: "index_vocabulary_concepts_on_source_id"
     t.index ["type"], name: "index_vocabulary_concepts_on_type"
   end
 
   create_table "vocabulary_hyper_concepts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "uri"
+    t.string "label"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "vocabulary_labels", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "labelable_type"
-    t.uuid "labelable_id"
-    t.uuid "creator_id"
-    t.string "type"
-    t.string "vernacular"
-    t.string "historical"
-    t.string "body"
-    t.string "language"
-    t.boolean "abbrevation"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["creator_id"], name: "index_vocabulary_labels_on_creator_id"
-    t.index ["labelable_type", "labelable_id"], name: "index_vocabulary_labels_on_labelable_type_and_labelable_id"
-    t.index ["type"], name: "index_vocabulary_labels_on_type"
-  end
-
-  create_table "vocabulary_notes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "notable_type"
-    t.uuid "notable_id"
-    t.uuid "creator_id"
-    t.string "type"
-    t.text "body"
-    t.string "language"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["creator_id"], name: "index_vocabulary_notes_on_creator_id"
-    t.index ["notable_type", "notable_id"], name: "index_vocabulary_notes_on_notable_type_and_notable_id"
-    t.index ["type"], name: "index_vocabulary_notes_on_type"
   end
 
   create_table "vocabulary_relationships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -188,30 +165,15 @@ ActiveRecord::Schema.define(version: 2018_11_15_164659) do
     t.index ["type"], name: "index_vocabulary_relationships_on_type"
   end
 
-  create_table "vocabulary_schemes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "profile_id"
-    t.uuid "creator_id"
-    t.string "abbr"
-    t.string "name"
-    t.string "slug"
-    t.integer "concepts_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["abbr"], name: "index_vocabulary_schemes_on_abbr"
-    t.index ["creator_id"], name: "index_vocabulary_schemes_on_creator_id"
-    t.index ["profile_id"], name: "index_vocabulary_schemes_on_profile_id"
-    t.index ["slug"], name: "index_vocabulary_schemes_on_slug", unique: true
-  end
-
   create_table "vocabulary_states", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "concept_id"
     t.uuid "creator_id"
-    t.string "state"
+    t.string "type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["concept_id"], name: "index_vocabulary_states_on_concept_id"
     t.index ["creator_id"], name: "index_vocabulary_states_on_creator_id"
-    t.index ["state"], name: "index_vocabulary_states_on_state"
+    t.index ["type"], name: "index_vocabulary_states_on_type"
   end
 
   add_foreign_key "memberships", "organizations"
@@ -220,13 +182,11 @@ ActiveRecord::Schema.define(version: 2018_11_15_164659) do
   add_foreign_key "organizations", "users", column: "creator_id"
   add_foreign_key "user_sessions", "users"
   add_foreign_key "users", "users", column: "approver_id"
-  add_foreign_key "vocabulary_concepts", "vocabulary_schemes", column: "scheme_id"
-  add_foreign_key "vocabulary_labels", "users", column: "creator_id"
-  add_foreign_key "vocabulary_notes", "users", column: "creator_id"
+  add_foreign_key "vocabulary_concepts", "profiles"
+  add_foreign_key "vocabulary_concepts", "users", column: "creator_id"
+  add_foreign_key "vocabulary_concepts", "vocabulary_concepts", column: "source_id"
   add_foreign_key "vocabulary_relationships", "users", column: "creator_id"
   add_foreign_key "vocabulary_relationships", "vocabulary_concepts", column: "concept_id"
-  add_foreign_key "vocabulary_schemes", "profiles"
-  add_foreign_key "vocabulary_schemes", "users", column: "creator_id"
   add_foreign_key "vocabulary_states", "users", column: "creator_id"
   add_foreign_key "vocabulary_states", "vocabulary_concepts", column: "concept_id"
 end

@@ -1,3 +1,8 @@
+# t.references :concept, foreign_key: {to_table: :vocabulary_concepts}, type: :uuid
+# t.references :creator, foreign_key: {to_table: :users}, type: :uuid
+# t.string     :type
+# t.references :inversable, polymorphic: true, type: :uuid, index: { name: 'index_vocabulary_relationships_on_inverseable' } # entweder hyper_concept oder concept
+
 module Vocabulary
   class Relationship < ApplicationRecord
     self.inheritance_column = :_type_disabled

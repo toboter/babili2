@@ -1,14 +1,19 @@
+# t.references :notable, polymorphic: true, type: :uuid
+# t.references :creator, foreign_key: {to_table: :users}, type: :uuid
+# t.string     :type
+# t.text       :body
+# t.string     :language
+
 module Vocabulary
-  class Note < ApplicationRecord
-    self.inheritance_column = :_type_disabled
+  class Note
+    include AttrJson::Model, AttrJson::Model::CocoonCompat
+    attr_json :type, :string
+    attr_json :body, :text
+    attr_json :lang, :string
+
     TYPES = %w(Scope Definition Example History Editorial Change)
 
-    # has_paper_trail
-
-    belongs_to :creator, class_name: 'User'
-    belongs_to :notable, polymorphic: true, touch: true
-
-    validates :type, :body, :language, presence: true
+    validates :type, :body, :lang, presence: true
 
   end
 end

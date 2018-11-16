@@ -1,0 +1,11 @@
+<div class="col-lg-6 nested-fields">
+  <div class="card shadow-sm rounded p-2 text-small">
+    <%= f.input :type, collection: Vocabulary::Label::TYPES, include_blank: false  %>
+    <%= f.input :vernacular, collection: Vocabulary::Label::VERNACULARS, include_blank: false %>
+    <%= f.input :historical, collection: Vocabulary::Label::HISTORICALS, include_blank: false %>
+    <%= f.input :body, as: :string, label: 'Label' %>
+    <%= f.input :lang, label: 'Language' %>
+    <%= f.input :abbr %>
+    <%= link_to_remove_association icon('fas', 'remove', 'remove'), f %>
+  </div>
+</div>

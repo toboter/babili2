@@ -40,10 +40,8 @@ Rails.application.routes.draw do
   root to: "home#index"
 
   resources :profiles, only: :show, path: '' do
-    scope module: :vocabulary do
-      resources :schemes, path: 'vocabularies' do
-        resources :concepts
-      end
+    namespace :vocabulary do
+      resources :concepts, path: ''
     end
     resources :workspaces do
       resources :nodes

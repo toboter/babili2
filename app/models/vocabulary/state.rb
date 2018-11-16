@@ -1,3 +1,5 @@
+# t.string     :uri
+
 module Vocabulary
   class State < ApplicationRecord
     self.inheritance_column = :_type_disabled
