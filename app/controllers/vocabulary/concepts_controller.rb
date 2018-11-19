@@ -1,9 +1,10 @@
 module Vocabulary
   class ConceptsController < ApplicationController
     before_action :set_profile
+    layout 'vocabulary'
     
     def index
-      @concepts = @profile.concepts
+      @concepts = @profile.concepts.eager_load(:relationships, :states)
     end
 
     def show
@@ -22,8 +23,13 @@ module Vocabulary
     end
 
     def create
-      @concept = @profile.concepts.build(concept_params)
-      @concept.creator = current_user
+      @concept = @profile.concepts.build(concept_params.merge(
+        creator: current_user, 
+        current_state: {
+          type: concept_params[:current_state], 
+          creator: current_user
+        })
+      )
       respond_to do |format|
         if @concept.save
           format.html { redirect_to [@profile, @concept], notice: "Successfully created concept." }
@@ -38,7 +44,12 @@ module Vocabulary
     def update
       @concept = @profile.concepts.find(params[:id])
       respond_to do |format|
-        if @concept.update(concept_params)
+        if @concept.update(concept_params.merge(
+            current_state: {
+              type: concept_params[:current_state], 
+              creator: current_user
+            })
+          )
           format.html { redirect_to [@profile, @concept], notice: "Successfully updated concept." }
           format.js
         else
@@ -66,8 +77,11 @@ module Vocabulary
           :abbr
         ],
         relationships_attributes: [
+          :id,
+          :creator_id,
           :type,
-          :inversable
+          :foreign_concept,
+          :_destroy
         ],
         notes_attributes: [
           :type,

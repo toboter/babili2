@@ -1,9 +1,15 @@
 <div class="container">
   <div class="row">
     <div class="col-sm-12">
-      <%= simple_form_for [@profile, concept], html: { class: 'form-horizontal' },wrapper: :horizontal_form do |f| %>
+      <%= simple_form_for [@profile, concept], html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f| %>
         <%= f.error_notification %>
         <%= f.input :type, collection: Vocabulary::Concept::TYPES, include_blank: false %>
+
+        <%= f.input :current_state, 
+          as: :radio_buttons, 
+          collection: Vocabulary::State::TYPES, 
+          selected: f.object.current_state
+        %>
 
         <div class="row mb-4 labels">
           <%= f.simple_fields_for :labels do |l| %>
@@ -25,10 +31,6 @@
           <% end %>
         </div>
         <%= link_to_add_association icon('fas', 'plus', 'Note'), f, :notes, data: {"association-insertion-node": "div.notes", "association-insertion-method": "append"}, class: 'btn btn-secondary btn-sm' %>
-
-        <%= f.simple_fields_for :states do |s| %>
-        no, will make it by an state accessor
-        <% end %>
 
         <%= f.submit %>
       <% end %>

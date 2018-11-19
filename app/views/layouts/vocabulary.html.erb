@@ -1,0 +1,22 @@
+<% content_for :content do %>
+  <div class="header bg-light mb-4 border-bottom">
+    <div class="container">
+      <div class="d-flex flex-row pt-3 pb-2">
+        <%= link_to image_tag(@profile.avatar_url(:small_thumb), width: "57", height: "57", class: 'shadow-sm rounded'), @profile %>
+        <%= content_tag :div, class: 'ml-3 flex-grow-1' do %>
+          <%= content_tag :h4, class: 'font-weight-normal mb-0' do %>
+            <%= link_to @profile.title, @profile, class: 'text-secondary align-middle', title: 'Back to profile' %>
+            <%= icon('fas', 'eye-slash', class: 'text-small text-secondary align-middle ml-1', title: 'Organization is private.', data: {toggle: "tooltip", placement: "right"}) if @profile.private? %>
+          <% end %>
+          <%= link_to 'Vocabulary', profile_vocabulary_concepts_path(@profile), class: 'text-secondary font-weight-bold', title: 'Back to vocabulary index' %>
+        <% end %>
+        <%= content_tag :div, yield(:menu_bar) if content_for?(:menu_bar) %>
+      </div>
+    </div>
+  </div>
+  <div class="main container">
+    <%= yield %>
+  </div>
+<% end %>
+
+<%= render template: "layouts/application" %>

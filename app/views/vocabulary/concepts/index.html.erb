@@ -1,5 +1,19 @@
-Hello Vocabulary!
+<% content_for :menu_bar do %>
+  <div class="btn-group">
+    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <%= icon('fas', 'plus', 'Add') %>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right">
+      <%= link_to 'Concept', new_profile_vocabulary_concept_path(@profile), class: 'dropdown-item text-small' %>
+      <%= link_to 'Collection', new_profile_vocabulary_concept_path(@profile), class: 'dropdown-item text-small' %>
+      <div class="dropdown-divider"></div>
+      <%= link_to 'Import', new_profile_vocabulary_concept_path(@profile), class: 'dropdown-item text-small' %>
+    </div>
+  </div>
+<% end %>
 
-<%= @concepts.inspect %>
-
-<%= link_to 'new', new_profile_vocabulary_concept_path(@profile) %>
+<% @concepts.roots.sort_by{|c| c.name(@language)}.each do |root| %>
+  <div class="mb-4">
+    <%= render partial: 'vocabulary/concepts/concept', object: root, locals: {depth: 0} %>
+  </div>
+<% end %>

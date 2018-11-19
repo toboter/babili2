@@ -1,0 +1,13 @@
+<%= content_tag :div, style: "padding-left: #{depth*20}px;" do %>
+  <%= link_to profile_vocabulary_concept_path(@profile, concept) do %>
+    <div class="border mb-1 p-2">
+      <% if concept != @concept %>
+        <%= content_tag :h6, concept.name(@language), class: ("mb-0 text-secondary#{' font-weight-bold' if concept.root?}") %>
+        <%= content_tag :p, concept.definition(@language), class: 'text-secondary text-small text-muted mb-0' %>
+      <% else %>
+        <%= content_tag :span, concept.name(@language) %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+<%= render concept.narrower_concepts.sort_by{|c| c.name(@language)}, depth: depth+2 %>

@@ -3,7 +3,7 @@
     <%= f.input :type, collection: Vocabulary::Label::TYPES, include_blank: false  %>
     <%= f.input :vernacular, collection: Vocabulary::Label::VERNACULARS, include_blank: false %>
     <%= f.input :historical, collection: Vocabulary::Label::HISTORICALS, include_blank: false %>
-    <%= f.input :body, as: :string, label: 'Label' %>
+    <%= f.input :body, as: :string, label: 'Term' %>
     <%= f.input :lang, label: 'Language' %>
     <%= f.input :abbr %>
     <%= link_to_remove_association icon('fas', 'remove', 'remove'), f %>

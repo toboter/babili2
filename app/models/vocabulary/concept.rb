@@ -16,22 +16,46 @@ module Vocabulary
     belongs_to :creator, class_name: 'User'
     belongs_to :profile, counter_cache: true 
     # has_many :references, as: :referenceable
-    has_many :relationships, dependent: :destroy
-      has_many :hyper_concepts, through: :relationships, source: :inverseable, source_type: 'Vocabulary::HyperConcept'
-      has_many :local_concepts, through: :relationships, source: :inverseable, source_type: 'Vocabulary::Concept'
-      has_many :broader_concepts, -> { where(type: 'broader') }, through: :relationships, source: :inverseable
-      has_many :close_concepts, -> { where(type: 'close') }, through: :relationships, source: :inverseable
-      has_many :exact_concepts, -> { where(type: 'exact') }, through: :relationships, source: :inverseable
-      has_many :narrower_concepts, -> { where(type: 'narrower') }, through: :relationships, source: :inverseable
-      has_many :related_concepts, -> { where(type: 'related') }, through: :relationships, source: :inverseable
     has_many :states, dependent: :destroy
-      has_one :current_state, -> { order(created_at: :desc).first }, through: :states
+    has_many :relationships, dependent: :destroy
+      has_many :local_concepts, as: :inverseable, through: :relationships, dependent: :destroy, source: :inversable, source_type: 'Vocabulary::Concept'
+      has_many :narrower_concepts, -> { merge(Vocabulary::Relationship.narrower) }, as: :inverseable, through: :relationships, dependent: :destroy, source: :inversable, source_type: 'Vocabulary::Concept'
+      has_many :broader_concepts, -> { merge(Vocabulary::Relationship.broader) }, as: :inverseable, through: :relationships, dependent: :destroy, source: :inversable, source_type: 'Vocabulary::Concept'
+      has_many :close_concepts, -> { merge(Vocabulary::Relationship.close) }, as: :inverseable, through: :relationships, dependent: :destroy, source: :inversable, source_type: 'Vocabulary::Concept'
+      has_many :exact_concepts, -> { merge(Vocabulary::Relationship.exact) }, as: :inverseable, through: :relationships, dependent: :destroy, source: :inversable, source_type: 'Vocabulary::Concept'
+      has_many :related_concepts, -> { merge(Vocabulary::Relationship.related) }, as: :inverseable, through: :relationships, dependent: :destroy, source: :inversable, source_type: 'Vocabulary::Concept'
+
+ 
+    def root?
+      self.in?(self.class.roots)
+    end
+
+    scope :roots, -> {
+      relationships = Vocabulary::Relationship.arel_table
+      concepts = Vocabulary::Concept.arel_table
+      where(
+        Vocabulary::Relationship \
+          .where(relationships[:concept_id].eq(concepts[:id])) \
+          .where(relationships[:type].eq('broader')) \
+          .exists
+          .not
+      )
+    }
+
+    attr_accessor :current_state
 
     validates :type, :creator, :labels, presence: true
 
-    accepts_nested_attributes_for :relationships, allow_destroy: true, reject_if: proc { |attributes| attributes['inversable'].blank? }
+    accepts_nested_attributes_for :relationships, allow_destroy: true, reject_if: proc { |attributes| attributes['foreign_concept'].blank? }
     accepts_nested_attributes_for :states, reject_if: :all_blank, allow_destroy: true
 
+    def current_state
+      states.order(created_at: :desc).first.try(:type) || 'Unstable'
+    end
+
+    def current_state=(params)
+      self.states.build(params) unless params[:type] == current_state
+    end
 #    after_commit :reindex_concept
 #
 #    # surpress double entries in search, only show the original
@@ -62,6 +86,10 @@ module Vocabulary
       type == 'Collection' ? "<#{preferred_label(lang).try(:body)}>" : preferred_label(lang).try(:body)
     end
 
+    def definition(lang=nil)
+      notes.select{ |n| n.type == 'Definition' and n.lang == lang }.first.try(:body).presence || notes.select{ |n| n.type == 'Definition' }.first.try(:body)
+    end
+
 #    def indent
 #      ancestor_links.first ? (ancestor_links.first.distance.to_i+1)*17 : 20
 #    end
@@ -70,31 +98,6 @@ module Vocabulary
 #      [creator].concat(labels.map(&:creator)).concat(notes.map(&:creator)).flatten.uniq
 #    end
 #
-#
-#    def broader_concepts=(ids)
-#      ids = ids.reject { |c| c.empty? }.split(",").flatten
-#      parents = Vocab::Concept.find(ids)
-#      (self.parents - parents).each do |parent_to_remove|
-#        remove_parent(parent_to_remove)
-#      end
-#      self.parents = parents
-#      unless self.new_record?
-#        parents.empty? ? self.make_root : ActsAsDAG::HelperMethods.unlink(nil, self)
-#      end
-#    end
-#
-#    def narrower_concepts=(ids)
-#      ids = ids.reject { |c| c.empty? }.split(",").flatten
-#      children = Vocab::Concept.find(ids)
-#      (self.children - children).each do |child_to_remove|
-#        remove_child(child_to_remove)
-#        child_to_remove.parents.empty? ? child_to_remove.make_root : ActsAsDAG::HelperMethods.unlink(nil, child_to_remove)
-#      end
-#      self.children = children
-#      children.each do |child|
-#        ActsAsDAG::HelperMethods.unlink(nil, child)
-#      end
-#    end
 #
 #    def self.sorted_by(sort_option)
 #      direction = ((sort_option =~ /desc$/) ? 'desc' : 'asc').to_sym
